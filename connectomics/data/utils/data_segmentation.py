@@ -19,6 +19,7 @@ from .data_affinity import *
 from .data_transform import *
 from .data_diffusion import seg2diffgrads
 from .data_weight import log_once
+from .data_sdf import compute_sdf_3d_fast, seg_to_sdf
 
 RATES_TYPE = Optional[Union[List[int], int]]
 
@@ -372,6 +373,17 @@ def seg_to_targets(
                 raise NotImplementedError
             aff = seg2affinity(label, '2')
             out[tid] = aff2boundary_v2(aff, alpha)
+
+        elif topt[0] == 'S':  # 3D Signed Distance Function (SDF)
+            # Format: S or S-trunc where trunc is truncation distance
+            # SDF: negative inside instances, positive outside, zero on boundary
+            truncate = 10.0  # default truncation
+            if len(topt) > 1:
+                parts = topt.split('-')
+                if len(parts) >= 2:
+                    truncate = float(parts[1])
+            sdf = compute_sdf_3d_fast(label.astype(np.int32), truncate_distance=truncate)
+            out[tid] = sdf[np.newaxis, :].astype(np.float32)
 
         else:
             raise NameError("Target option %s is not valid!" % topt[0])

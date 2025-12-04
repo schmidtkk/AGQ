@@ -8,3 +8,4 @@ from .data_misc import *
 from .data_weight import *
 from .data_diffusion import *
 from .data_bbox import *
+from .data_sdf import *

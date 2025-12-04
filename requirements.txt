@@ -245,7 +245,7 @@ tzdata==2023.4
 uri-template==1.2.0
 urllib3==1.26.14
 wandb==0.17.4
-waterz==0.9.4
+# waterz==0.9.4
 wcwidth==0.2.6
 webcolors==1.12
 webencodings==0.5.1

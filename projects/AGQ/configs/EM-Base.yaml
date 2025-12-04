@@ -1,0 +1,57 @@
+# Configuration for EM dataset training
+# All other configurations are set by default. If you want to add new config options,
+# please modify ../connectomics/config/defaults.py
+SYSTEM:
+  NUM_GPUS: 1
+  NUM_CPUS: 4
+AUGMENTOR:
+  SMOOTH: False
+MODEL:
+  INPUT_SIZE: [17, 257, 257]
+  OUTPUT_SIZE: [17, 257, 257]
+  IN_PLANES: 1
+  OUT_PLANES: 3
+  TARGET_OPT: ["2"]
+  LABEL_EROSION: 1
+  LOSS_OPTION: [["WeightedBCEWithLogitsLoss", "DiceLoss"]]
+  LOSS_WEIGHT: [[1.0, 0.5]]
+  WEIGHT_OPT: [["1", "0"]]
+  OUTPUT_ACT: [["none", "sigmoid"]]
+  FILTERS: [32, 64, 96, 128, 160]
+  NORM_MODE: gn
+DATASET:
+  INPUT_PATH: datasets/EM/
+  IMAGE_NAME: EM_train_inputs.h5
+  LABEL_NAME: EM_train_labels.h5
+  VAL_IMAGE_NAME: EM_val_inputs.h5
+  VAL_LABEL_NAME: EM_val_labels.h5
+  OUTPUT_PATH: outputs/EM/res_unet
+  PAD_SIZE: [4, 64, 64]
+  # EM dataset has instance masks with hundreds of unique indices
+  REDUCE_LABEL: True
+  # Reject sampling settings for sparse labels
+  REJECT_SAMPLING:
+    SIZE_THRES: 100
+    DIVERSITY: 2
+    P: 0.95
+SOLVER:
+  LR_SCHEDULER_NAME: WarmupCosineLR
+  BASE_LR: 0.02
+  ITERATION_STEP: 1
+  ITERATION_SAVE: 10000
+  ITERATION_TOTAL: 150000
+  SAMPLES_PER_BATCH: 2
+MONITOR:
+  ITERATION_NUM: [200, 1000]
+INFERENCE:
+  INPUT_SIZE: [17, 513, 513]
+  OUTPUT_SIZE: [17, 513, 513]
+  OUTPUT_ACT: ["sigmoid"]
+  IMAGE_NAME: EM_val_inputs.h5
+  OUTPUT_PATH: outputs/EM/test
+  OUTPUT_NAME: result.h5
+  PAD_SIZE: [4, 32, 32]
+  AUG_MODE: min
+  AUG_NUM: None
+  STRIDE: [8, 128, 128]
+  SAMPLES_PER_BATCH: 4
